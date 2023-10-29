@@ -53,37 +53,6 @@ namespace PetHotel.Data
                     context.SaveChanges();
                 }
 
-                if (!context.Books.Any())
-                {
-                    context.Books.AddRange(new List<Book>
-            {
-                new Book
-                {
-                    Title = "Carte 1",
-                    Price = 19.99m,
-                    Length = "5h 30m",
-                    AudioFilePath = "c:\\audio\\carte1.mp3",
-                    PublicationDate = DateTime.Now,
-                    Category = Category.Horror,
-                    AuthorId = 1,
-                    PublisherId = 1 
-                },
-                new Book
-                {
-                    Title = "Carte 2",
-                    Price = 24.99m,
-                    Length = "6h 15m",
-                    AudioFilePath = "c:\\audio\\carte2.mp3",
-                    PublicationDate = DateTime.Now,
-                    Category = Category.Comedy,
-                    AuthorId = 2, 
-                    PublisherId = 2 
-                }
-               
-            });
-                    context.SaveChanges();
-                }
-
                 if (!context.Readers.Any())
                 {
                     context.Readers.AddRange(new List<Reader>
@@ -100,7 +69,42 @@ namespace PetHotel.Data
                 }
                     });
                     context.SaveChanges();
-                }      
+                }
+
+                if (!context.Books.Any())
+                {
+                    context.Books.AddRange(new List<Book>
+            {
+                new Book
+                {
+                    Title = "Carte 1",
+                    Price = 19.99m,
+                    Length = "5h 30m",
+                    ImageUrl="https://audiotribe.ro/wp-content/uploads/2023/05/800-19651-500x500.jpg",
+                    AudioFilePath = "https://audiotribe.ro/wp-content/uploads/2023/05/800-19651-500x500.jpg",
+                    PublicationDate = DateTime.Now,
+                    Category = Category.Horror,
+                    AuthorId = 1,
+                    PublisherId = 1,
+                    ReaderId = 1
+                },
+                new Book
+                {
+                    Title = "Carte 2",
+                    Price = 24.99m,
+                    Length = "6h 15m",
+                    ImageUrl="https://audiotribe.ro/wp-content/uploads/2023/05/800-9751-500x500.jpg",
+                    AudioFilePath = "https://audiotribe.ro/wp-content/uploads/2023/05/800-9751-500x500.jpg",
+                    PublicationDate = DateTime.Now,
+                    Category = Category.Comedy,
+                    AuthorId = 2,
+                    PublisherId = 2,
+                    ReaderId = 2 
+                }
+               
+            });
+                    context.SaveChanges();
+                }
             }
         }
     }

@@ -19,7 +19,9 @@ namespace AudioBooksApp.Models
         public int AuthorId { get; set; }
         public Author? Author { get; set; } 
         public int PublisherId { get; set; }
-        public Publisher? Publisher { get; set; } 
+        public Publisher? Publisher { get; set; }
+        public int ReaderId { get; set; }
+        public Reader? Reader { get; set; }
     }
 
 }

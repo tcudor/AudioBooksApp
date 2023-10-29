@@ -73,7 +73,7 @@ namespace AudioBooksApp.Migrations
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReaderId")
+                    b.Property<int>("ReaderId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -139,13 +139,17 @@ namespace AudioBooksApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AudioBooksApp.Models.Reader", null)
+                    b.HasOne("AudioBooksApp.Models.Reader", "Reader")
                         .WithMany("Books")
-                        .HasForeignKey("ReaderId");
+                        .HasForeignKey("ReaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
 
                     b.Navigation("Publisher");
+
+                    b.Navigation("Reader");
                 });
 
             modelBuilder.Entity("AudioBooksApp.Models.Author", b =>

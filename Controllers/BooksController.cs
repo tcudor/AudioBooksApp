@@ -22,7 +22,7 @@ namespace AudioBooksApp.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Books.Include(b => b.Author).Include(b => b.Publisher);
+            var appDbContext = _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Reader);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -37,6 +37,7 @@ namespace AudioBooksApp.Controllers
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
+                .Include(b => b.Reader)
                 .FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {
@@ -51,6 +52,7 @@ namespace AudioBooksApp.Controllers
         {
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId");
+            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId");
             return View();
         }
 
@@ -59,7 +61,7 @@ namespace AudioBooksApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId")] Book book)
+        public async Task<IActionResult> Create([Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId,ReaderId")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +71,7 @@ namespace AudioBooksApp.Controllers
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
+            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
             return View(book);
         }
 
@@ -87,6 +90,7 @@ namespace AudioBooksApp.Controllers
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
+            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
             return View(book);
         }
 
@@ -95,7 +99,7 @@ namespace AudioBooksApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId,ReaderId")] Book book)
         {
             if (id != book.BookId)
             {
@@ -124,6 +128,7 @@ namespace AudioBooksApp.Controllers
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
+            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
             return View(book);
         }
 
@@ -138,6 +143,7 @@ namespace AudioBooksApp.Controllers
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
+                .Include(b => b.Reader)
                 .FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {

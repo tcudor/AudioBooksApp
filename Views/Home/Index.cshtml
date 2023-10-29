@@ -1,8 +1,51 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Book>
+
+@{
+    ViewData["Title"] = "List of Books";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<br /><br />
+<div class="row" style="margin-left:5%">
+    @foreach (var item in Model)
+    {     
+        <div class="col-md-4 col-xs-6 border-primary mb-3">
+            <div class="card mb-3" style="max-width: 480px;">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-header text-white bg-info">
+                            <p class="card-text">
+                                <h5 class="card-title">
+                                    @item.Title
+                                    
+                                </h5>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="@item.ImageUrl" width="200" height="310" alt="@item.Title">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <p class="card-text">@item.Length</p>
+                            <p class="card-text"><b>Price: </b>@item.Price</p>
+                            <p class="card-text"><b>Publication Date: </b>@item.PublicationDate.ToString("dd MMM yyyy")</p>
+                            <p class="card-text"><b>Category: </b>@item.Category</p>
+                            <p class="card-text"><b>Author: </b>@item.Author.Name</p>
+                            <p class="card-text"><b>Publisher: </b>@item.Publisher.Name</p>
+
+                            <p class="card-text"><b>Audio File Path:  <a href=@item.AudioFilePath download=@item.AudioFilePath>Download</a></p>
+                            @* Alte detalii pot fi adăugate aici, cum ar fi autorul, editura etc. *@
+
+                            <p class="card-text">
+                                <b>Status: </b>
+                                @* Logica pentru statusul cărții în funcție de data publicării, similar cu cea din exemplul tău *@
+                            </p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
