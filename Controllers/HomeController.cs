@@ -1,4 +1,5 @@
 ﻿using AudioBooksApp.Data;
+using AudioBooksApp.Data.Services;
 using AudioBooksApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +10,16 @@ namespace AudioBooksApp.Controllers
     public class HomeController : Controller
     {
 
-        private readonly AppDbContext _context;
+        private readonly IBooksService _service;
 
-        public HomeController(AppDbContext context)
+        public HomeController(IBooksService service)
         {
-            _context = context;
+            _service = service;
         }
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Reader);
-            return View(await appDbContext.ToListAsync());
+            var allBooks = await _service.GetAllBooks();
+            return View(allBooks);
         }
 
         public IActionResult Privacy()

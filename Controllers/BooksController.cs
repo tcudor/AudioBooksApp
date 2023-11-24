@@ -1,180 +1,122 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AudioBooksApp.Data.Services;
+using AudioBooksApp.Data.ViewModels;
+using AudioBooksApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using AudioBooksApp.Data;
-using AudioBooksApp.Models;
+using System.Threading.Tasks;
 
 namespace AudioBooksApp.Controllers
 {
+    
     public class BooksController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IBooksService _service;
 
-        public BooksController(AppDbContext context)
+        public BooksController(IBooksService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Books
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Reader);
-            return View(await appDbContext.ToListAsync());
+            var allBooks = await _service.GetAllBooks();
+            return View(allBooks);
         }
 
-        // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Books == null)
-            {
-                return NotFound();
-            }
-
-            var book = await _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.Publisher)
-                .Include(b => b.Reader)
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
+            var bookDetails = await _service.GetBookByIdAsync(id);
+            if (bookDetails == null) return View("NotFound");
+            return View(bookDetails);
         }
 
-        // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId");
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId");
-            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId");
+            var bookDropdownsData = await _service.GetNewBookDropdownsValues();
+            ViewBag.Readers = new SelectList(bookDropdownsData.Readers, "Id", "Name");
+            ViewBag.Publishers = new SelectList(bookDropdownsData.Publishers, "Id", "Name");
+            ViewBag.Authors = new SelectList(bookDropdownsData.Authors, "Id", "Name");
+
             return View();
         }
 
-        // POST: Books/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId,ReaderId")] Book book)
+        public async Task<IActionResult> Create(NewBookVM book)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
-            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
-            return View(book);
-        }
-
-        // GET: Books/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Books == null)
-            {
-                return NotFound();
+                var bookDropdownsData = await _service.GetNewBookDropdownsValues();
+                ViewBag.Readers = new SelectList(bookDropdownsData.Readers, "Id", "Name");
+                ViewBag.Publishers = new SelectList(bookDropdownsData.Publishers, "Id", "Name");
+                ViewBag.Authors = new SelectList(bookDropdownsData.Authors, "Id", "Name");
+                return View(book);
             }
 
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
-            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
-            return View(book);
-        }
-
-        // POST: Books/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Price,Length,ImageUrl,AudioFilePath,PublicationDate,Category,AuthorId,PublisherId,ReaderId")] Book book)
-        {
-            if (id != book.BookId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(book);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookExists(book.BookId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherId", book.PublisherId);
-            ViewData["ReaderId"] = new SelectList(_context.Readers, "ReaderId", "ReaderId", book.ReaderId);
-            return View(book);
-        }
-
-        // GET: Books/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Books == null)
-            {
-                return NotFound();
-            }
-
-            var book = await _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.Publisher)
-                .Include(b => b.Reader)
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
-        }
-
-        // POST: Books/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Books == null)
-            {
-                return Problem("Entity set 'AppDbContext.Books'  is null.");
-            }
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
-            {
-                _context.Books.Remove(book);
-            }
-            
-            await _context.SaveChangesAsync();
+            await _service.AddNewBookAsync(book);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-          return (_context.Books?.Any(e => e.BookId == id)).GetValueOrDefault();
+            var bookDetails = await _service.GetBookByIdAsync(id);
+            if (bookDetails == null) return View("NotFound");
+
+            var response = new NewBookVM()
+            {
+                Id = bookDetails.Id,
+                Title = bookDetails.Title,
+                Price = bookDetails.Price,
+                Length = bookDetails.Length,
+                ImageUrl = bookDetails.ImageUrl,
+                AudioFilePath = bookDetails.AudioFilePath,
+                PublicationDate = bookDetails.PublicationDate,
+                Category = bookDetails.Category,
+                AuthorId = bookDetails.AuthorId,
+                PublisherId = bookDetails.PublisherId,
+                ReaderId = bookDetails.ReaderId
+            };
+
+            var bookDropdownsData = await _service.GetNewBookDropdownsValues();
+            ViewBag.Readers = new SelectList(bookDropdownsData.Readers, "Id", "Name");
+            ViewBag.Publishers = new SelectList(bookDropdownsData.Publishers, "Id", "Name");
+            ViewBag.Authors = new SelectList(bookDropdownsData.Authors, "Id", "Name");
+
+            return View(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, NewBookVM book)
+        {
+            if (id != book.Id) return View("NotFound");
+            if (!ModelState.IsValid)
+            {
+                var bookDropdownsData = await _service.GetNewBookDropdownsValues();
+                ViewBag.Readers = new SelectList(bookDropdownsData.Readers, "Id", "Name");
+                ViewBag.Publishers = new SelectList(bookDropdownsData.Publishers, "Id", "Name");
+                ViewBag.Authors = new SelectList(bookDropdownsData.Authors, "Id", "Name");
+                return View(book);
+            }
+
+            await _service.UpdateBookAsync(book);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var bookDetails = await _service.GetBookByIdAsync(id);
+            if (bookDetails == null) return View("NotFound");
+            return View(bookDetails);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> Delete(int id, NewBookVM book)
+        {
+            var bookDetails = await _service.GetBookByIdAsync(id);
+            if (id != book.Id) return View("NotFound");
+            await _service.DeleteAsync(id);
+            return RedirectToAction("Index");
         }
     }
 }

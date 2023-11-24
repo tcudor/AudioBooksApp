@@ -1,8 +1,7 @@
-﻿namespace PetHotel.Data.Base
+﻿namespace AudioBooksApp.Data.Base
 {
     public interface IEntityBase
     {
         int Id { get; set; }
-
     }
 }

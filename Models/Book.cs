@@ -1,13 +1,13 @@
 ﻿using AudioBooksApp.Data.Enums;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
+using AudioBooksApp.Data.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace AudioBooksApp.Models
 {
-    public class Book
+    public class Book: IEntityBase
     {
         [Key]
-        public int BookId { get; set; }
+        public int Id { get; set; }
         public string? Title { get; set; }
         public decimal Price { get; set; }
         public string? Length { get; set; } //exrpimare in ora si minute

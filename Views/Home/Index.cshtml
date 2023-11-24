@@ -28,8 +28,9 @@
                             <p class="card-text"><b>Price: </b>@item.Price</p>
                             <p class="card-text"><b>Publication Date: </b><br>@item.PublicationDate.ToString("dd MMM yyyy")</p>
                             <p class="card-text"><b>Category: </b>@item.Category</p>
-                            <p class="card-text"><b>Author: </b>@item.Author.Name</p>
-                            <p class="card-text"><b>Publisher: </b>@item.Publisher.Name</p>
+                            <p class="card-text"><b>Author: </b>@(item.Author != null ? item.Author.Name : "Unknown")</p>
+                            <p class="card-text"><b>Publisher: </b>@(item.Publisher != null ? item.Publisher.Name : "Unknown")</p>
+
                             <p class="card-text"><b>Audio File Path: </b><a href=@item.AudioFilePath download=@item.AudioFilePath>Download</a></p>
                         </div>
                     </div>

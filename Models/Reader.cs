@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AudioBooksApp.Data.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace AudioBooksApp.Models
 {
-    public class Reader
+    public class Reader: IEntityBase
     {
         [Key]
-        public int ReaderId { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? Biography { get; set; }
 
