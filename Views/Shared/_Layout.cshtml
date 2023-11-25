@@ -28,12 +28,30 @@
                             </a>
 
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Books" asp-action="Index"><i class="bi bi-camera-reels"></i> Books</a>
                                 <a class="dropdown-item" asp-controller="Authors" asp-action="Index"><i class="bi bi-camera-reels"></i> Authors</a>
                                 <a class="dropdown-item" asp-controller="Readers" asp-action="Index"><i class="bi bi-headset"></i> Readers</a>
                                 <a class="dropdown-item" asp-controller="Publishers" asp-action="Index"><i class="bi bi-person-square"></i> Publishers</a>
                             </div>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @await Component.InvokeAsync("ShoppingCartSummary")
+                    </ul>
+
+                    <div class="dropdown">
+                        <button class="btn btn-outline-success dropdown-toggle" type="button" id="profile-btn" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="bi bi-person-badge"></i> Hello User
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="profile-btn">
+                            <li>
+                                <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                                    <i class="bi bi-list"></i> Orders
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -66,6 +84,10 @@
 
         body {
             overflow-x: hidden; 
+        }
+
+        main {
+            margin-top: 5%; 
         }
     </style>
 </body>

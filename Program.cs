@@ -1,4 +1,5 @@
 using AudioBooksApp.Data;
+using AudioBooksApp.Data.Cart;
 using AudioBooksApp.Data.Services;
 using AudioBooksApp.Services;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,11 @@ namespace AudioBooksApp
             builder.Services.AddScoped<IBooksService,BooksService>();
             builder.Services.AddScoped<IPublishersService, PublishersService>();
             builder.Services.AddScoped<IReadersService, ReadersService>();
+            builder.Services.AddScoped<IOrdersService,OrdersService>();
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
+
+            builder.Services.AddSession();
 
             builder.Services.AddControllersWithViews();
 
@@ -37,7 +43,7 @@ namespace AudioBooksApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();

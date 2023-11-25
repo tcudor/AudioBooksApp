@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AudioBooksApp.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class newConfig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,48 +15,62 @@ namespace AudioBooksApp.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    AuthorId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Biography = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
+                    table.PrimaryKey("PK_Authors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Publishers",
                 columns: table => new
                 {
-                    PublisherId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Publishers", x => x.PublisherId);
+                    table.PrimaryKey("PK_Publishers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Readers",
                 columns: table => new
                 {
-                    ReaderId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Biography = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Readers", x => x.ReaderId);
+                    table.PrimaryKey("PK_Readers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
-                    BookId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -71,25 +85,73 @@ namespace AudioBooksApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Books", x => x.BookId);
+                    table.PrimaryKey("PK_Books", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Books_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
-                        principalColumn: "AuthorId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Books_Publishers_PublisherId",
                         column: x => x.PublisherId,
                         principalTable: "Publishers",
-                        principalColumn: "PublisherId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Books_Readers_ReaderId",
                         column: x => x.ReaderId,
                         principalTable: "Readers",
-                        principalColumn: "ReaderId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShoppingCartItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookId = table.Column<int>(type: "int", nullable: true),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    ShoppingCartId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingCartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShoppingCartItems_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -106,11 +168,35 @@ namespace AudioBooksApp.Migrations
                 name: "IX_Books_ReaderId",
                 table: "Books",
                 column: "ReaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_BookId",
+                table: "OrderItems",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_OrderId",
+                table: "OrderItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingCartItems_BookId",
+                table: "ShoppingCartItems",
+                column: "BookId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "OrderItems");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingCartItems");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
             migrationBuilder.DropTable(
                 name: "Books");
 

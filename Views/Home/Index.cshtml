@@ -4,7 +4,7 @@
     ViewData["Title"] = "List of Books";
 }
 
-<div class="row" style="margin-top:5%">
+<div class="row">
     @foreach (var item in Model)
     {     
         <div class="col-md-4 col-xs-6 border-primary mb-3">
@@ -34,7 +34,18 @@
                             <p class="card-text"><b>Audio File Path: </b><a href=@item.AudioFilePath download=@item.AudioFilePath>Download</a></p>
                         </div>
                     </div>
-                   
+                    <div class="col-md-12">
+                        <div class="card-footer ">
+                            <div class="card-text row">
+                                <div class="col-5">
+                                    <a class="btn btn-outline-primary float-right" asp-controller="Books" asp-action="Details" asp-route-id="@item.Id"> <i class="bi bi-eye-fill"></i> Show Details</a>
+                                </div>
+                                <div class="col-7 text-end">
+                                    <a class="btn btn-success text-white" asp-controller="Orders" asp-action="AddItemShoppingCart" asp-route-id="@item.Id"><i class="bi bi-cart-plus"></i> Add to Cart(Price @item.Price.ToString() EUR)</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -13,6 +13,9 @@ namespace AudioBooksApp.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<Reader> Readers { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
     }
 }

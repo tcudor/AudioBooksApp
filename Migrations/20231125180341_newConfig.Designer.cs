@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AudioBooksApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231029161250_first")]
-    partial class first
+    [Migration("20231125180341_newConfig")]
+    partial class newConfig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,11 @@ namespace AudioBooksApp.Migrations
 
             modelBuilder.Entity("AudioBooksApp.Models.Author", b =>
                 {
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Biography")
                         .HasColumnType("nvarchar(max)");
@@ -39,18 +39,18 @@ namespace AudioBooksApp.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AuthorId");
+                    b.HasKey("Id");
 
                     b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("AudioBooksApp.Models.Book", b =>
                 {
-                    b.Property<int>("BookId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AudioFilePath")
                         .HasColumnType("nvarchar(max)");
@@ -82,7 +82,7 @@ namespace AudioBooksApp.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("BookId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
@@ -93,29 +93,79 @@ namespace AudioBooksApp.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("AudioBooksApp.Models.Publisher", b =>
+            modelBuilder.Entity("AudioBooksApp.Models.Order", b =>
                 {
-                    b.Property<int>("PublisherId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PublisherId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("AudioBooksApp.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("AudioBooksApp.Models.Publisher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PublisherId");
+                    b.HasKey("Id");
 
                     b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("AudioBooksApp.Models.Reader", b =>
                 {
-                    b.Property<int>("ReaderId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReaderId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Biography")
                         .HasColumnType("nvarchar(max)");
@@ -123,9 +173,33 @@ namespace AudioBooksApp.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ReaderId");
+                    b.HasKey("Id");
 
                     b.ToTable("Readers");
+                });
+
+            modelBuilder.Entity("AudioBooksApp.Models.ShoppingCartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("AudioBooksApp.Models.Book", b =>
@@ -155,9 +229,42 @@ namespace AudioBooksApp.Migrations
                     b.Navigation("Reader");
                 });
 
+            modelBuilder.Entity("AudioBooksApp.Models.OrderItem", b =>
+                {
+                    b.HasOne("AudioBooksApp.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AudioBooksApp.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("AudioBooksApp.Models.ShoppingCartItem", b =>
+                {
+                    b.HasOne("AudioBooksApp.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId");
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("AudioBooksApp.Models.Author", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("AudioBooksApp.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("AudioBooksApp.Models.Publisher", b =>
