@@ -3,47 +3,76 @@
 @{
     ViewData["Title"] = "List of Books";
 }
-
+<div>
+    <div id="imageContainer">
+        <img src="https://www.saga.co.uk/contentlibrary/saga/publishing/verticals/technology/home-technology/radio-and-audio/audiobooks.png" alt="Image 1">
+        <img src="https://blog-cdn.reedsy.com/directories/admin/featured_image/534/audiobook-guide-fastest-growing-book-format-3b2527.jpg" alt="Image 2">
+        <img src="https://www.popsci.com/uploads/2023/10/19/best-audiobook-apps.jpg?auto=webp&width=1440&height=810" alt="Image 3">
+    </div>
+</div>
 <div class="row">
-    @foreach (var item in Model)
-    {     
-        <div class="col-md-4 col-xs-6 border-primary mb-3">
-            <div class="card mb-3" style="max-width: 480px;">
-                <div class="row g-0">
-                    <div class="col-md-12">
-                        <div class="card-header text-white bg-info">
-                            <p class="card-text">
-                                <h5 class="card-title">
-                                    @item.Title                                   
-                                </h5>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <img src="@item.ImageUrl" alt="@item.Title" style="width:100%;height:100%">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card-body">
-                            <p class="card-text"><b>Length: </b>@item.Length</p>
-                            <p class="card-text"><b>Price: </b>@item.Price</p>
-                            <p class="card-text"><b>Publication Date: </b><br>@item.PublicationDate.ToString("dd MMM yyyy")</p>
-                            <p class="card-text"><b>Category: </b>@item.Category</p>
-                            <p class="card-text"><b>Author: </b>@(item.Author != null ? item.Author.Name : "Unknown")</p>
-                            <p class="card-text"><b>Publisher: </b>@(item.Publisher != null ? item.Publisher.Name : "Unknown")</p>
+    <div class="col-md-3">
+        <form asp-controller="Home" asp-action="Search" method="get">
+            <div class="input-group input-group-sm">
+                <input name="searchString" type="text" class="form-control" placeholder="Search for a book..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-success" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-8">
+        <div>
+            <span style="margin-right:2%;margin-left:2%; border: 1px solid #ccc; background-color: #f8f9fa; padding: 5px; border-radius: 5px;">Sort after Title</span>
+            <a asp-action="Sorted" asp-route-sortOrder="@ViewBag.TitleSortParam" asp-route-sortField="Title" class="btn btn-secondary">
+                <i class="bi bi-caret-up"></i>
+            </a>
+            <a asp-action="Sorted" asp-route-sortOrder="@ViewBag.TitleSortParam" asp-route-sortField="Title" class="btn btn-secondary">
+                <i class="bi bi-caret-down"></i>
+            </a>
+            <span style="margin-right:2%;margin-left:2%; border: 1px solid #ccc; background-color: #f8f9fa; padding: 5px; border-radius: 5px;">Sort after Price</span>
+            <a asp-action="Sorted" asp-route-sortOrder="@ViewBag.PriceSortParam" asp-route-sortField="Price" class="btn btn-secondary">
+                <i class="bi bi-caret-up"></i>
+            </a>
+            <a asp-action="Sorted" asp-route-sortOrder="@ViewBag.PriceSortParam" asp-route-sortField="Price" class="btn btn-secondary">
+                <i class="bi bi-caret-down"></i>
+            </a>
+        </div>
+    </div>
 
-                            <p class="card-text"><b>Audio File Path: </b><a href=@item.AudioFilePath download=@item.AudioFilePath>Download</a></p>
+
+</div>
+
+
+
+
+<div class="row" style="margin-top:1%">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title">
+
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">
+                        <b>Length:</b> @item.Length<br>
+                        <b>Price:</b> @item.Price EUR<br>
+                        <b>Publication Date:</b> @item.PublicationDate.ToString("dd MMM yyyy")<br>
+                        <b>Category:</b> @item.Category<br>
+                        <b>Author:</b> @item.Author.Name<br>
+                        <b>Reader:</b> @item.Reader.Name<br>
+                        <b>Publisher:</b> @item.Publisher.Name<br>
+                    </p>
+                </div>
+
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="@Url.Action("Details", "Books", new { id = item.Id })" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i> Show Details</a>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="card-footer ">
-                            <div class="card-text row">
-                                <div class="col-5">
-                                    <a class="btn btn-outline-primary float-right" asp-controller="Books" asp-action="Details" asp-route-id="@item.Id"> <i class="bi bi-eye-fill"></i> Show Details</a>
-                                </div>
-                                <div class="col-7 text-end">
-                                    <a class="btn btn-success text-white" asp-controller="Orders" asp-action="AddItemShoppingCart" asp-route-id="@item.Id"><i class="bi bi-cart-plus"></i> Add to Cart(Price @item.Price.ToString() EUR)</a>
-                                </div>
-                            </div>
+                        <div class="col-6 text-end">
+                            <a href="@Url.Action("AddItemShoppingCart", "Orders", new { id = item.Id })" class="btn btn-success text-white"><i class="bi bi-cart-plus"></i> Price @item.Price.ToString() EUR</a>
                         </div>
                     </div>
                 </div>
@@ -51,4 +80,18 @@
         </div>
     }
 </div>
+<style>
+    #imageContainer {
+        display: flex;
+        overflow: hidden;
+        height: 200px;
+        margin-bottom: 20px;
+    }
 
+        #imageContainer img {
+            flex: 1;
+            width: 33%;
+            height: auto;
+        }
+
+</style>

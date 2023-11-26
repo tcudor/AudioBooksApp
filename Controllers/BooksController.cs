@@ -1,4 +1,5 @@
 ﻿using AudioBooksApp.Data.Services;
+using AudioBooksApp.Data.Static;
 using AudioBooksApp.Data.ViewModels;
 using AudioBooksApp.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AudioBooksApp.Controllers
 {
-    
+    [Authorize(Roles = UserRoles.Admin)]
     public class BooksController : Controller
     {
         private readonly IBooksService _service;
@@ -18,13 +19,13 @@ namespace AudioBooksApp.Controllers
             _service = service;
         }
 
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var allBooks = await _service.GetAllBooks();
             return View(allBooks);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             var bookDetails = await _service.GetBookByIdAsync(id);

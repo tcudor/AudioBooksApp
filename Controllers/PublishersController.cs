@@ -3,7 +3,11 @@ using System.Threading.Tasks;
 using AudioBooksApp.Models;
 using AudioBooksApp.Services;
 using AudioBooksApp.Data.Services;
+using AudioBooksApp.Data.Static;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
+[Authorize(Roles = UserRoles.Admin)]
 public class PublishersController : Controller
 {
     private readonly IPublishersService _service;

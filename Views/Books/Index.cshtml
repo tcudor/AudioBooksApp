@@ -4,16 +4,15 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p style="margin-bottom: 20px;">
+<p style="margin-bottom: 2%;">
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th style="width:10%">
+            <th style="width:6%">
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
@@ -69,7 +68,11 @@
 
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AudioFilePath)
+                    @{
+                        var filePath = item.ImageUrl;
+                        var displayPath = filePath != null && filePath.Length > 30 ? filePath.Substring(0, 30) + "..." : filePath;
+                    }
+                    @Html.DisplayFor(modelItem => displayPath)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.PublicationDate)
@@ -78,22 +81,22 @@
                     @Html.DisplayFor(modelItem => item.Category)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Author.Id)
+                    @Html.DisplayFor(modelItem => item.Author.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Publisher.Id)
+                    @Html.DisplayFor(modelItem => item.Publisher.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Reader.Id)
+                    @Html.DisplayFor(modelItem => item.Reader.Name)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
-                </td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    <div class="d-flex">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning me-2">Edit</a>
+
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info me-2">Details</a>
+
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    </div>
                 </td>
             </tr>
         }

@@ -4,6 +4,9 @@ using AudioBooksApp.Data.Services;
 using AudioBooksApp.Services;
 using Microsoft.EntityFrameworkCore;
 using PetHotel.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using AudioBooksApp.Models;
 
 namespace AudioBooksApp
 {
@@ -24,7 +27,14 @@ namespace AudioBooksApp
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
 
+            //Authentication and authorization
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            builder.Services.AddMemoryCache();
             builder.Services.AddSession();
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
 
             builder.Services.AddControllersWithViews();
 
@@ -45,7 +55,7 @@ namespace AudioBooksApp
             app.UseStaticFiles();
             app.UseSession();
             app.UseRouting();
-
+            app.UseAuthentication();;
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -53,6 +63,7 @@ namespace AudioBooksApp
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             AppDbInitializer.Seed(app);
+            AppDbInitializer.SeedUsersAndRolesAsync(app).Wait();
             app.Run();
         }
     }

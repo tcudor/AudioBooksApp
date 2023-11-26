@@ -3,7 +3,11 @@ using System.Threading.Tasks;
 using AudioBooksApp.Models;
 using AudioBooksApp.Services;
 using AudioBooksApp.Data.Services;
+using AudioBooksApp.Data.Static;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
+[Authorize(Roles = UserRoles.Admin)]
 public class AuthorsController : Controller
 {
     private readonly IAuthorsService _service;
@@ -60,6 +64,7 @@ public class AuthorsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Details(int id)
     {
         var authorDetails = await _service.GetByIdAsync(id);

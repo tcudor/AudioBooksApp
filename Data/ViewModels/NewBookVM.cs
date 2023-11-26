@@ -11,7 +11,7 @@ namespace AudioBooksApp.Data.ViewModels
         [Required(ErrorMessage = "Title is required")]
         public string? Title { get; set; }
 
-        [Display(Name = "Price in $")]
+        [Display(Name = "Price in euro")]
         [Required(ErrorMessage = "Price is required")]
         public decimal Price { get; set; }
 

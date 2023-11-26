@@ -31,11 +31,14 @@
                                             <br>
                                         </div>                                  
                                 }
-                            </ul>
                         </td>
                         <td class="align-middle">
                             @order.OrderItems.Select(m => m.Book.Price * m.Amount).Sum().ToString("") EUR
                         </td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <td class="align-middle"> @order.User.FullName </td>
+                        }
                     </tr>
                 }
             </tbody>
