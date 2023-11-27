@@ -16,6 +16,10 @@
                     <th>Order ID</th>
                     <th>Items</th>
                     <th>Total</th>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <th>User</th>
+                    }
                 </tr>
             </thead>
             <tbody>
